@@ -2,6 +2,7 @@ import math
 import copy
 import numpy as np
 from sklearn.model_selection import KFold
+import matplotlib.pyplot as plt
 
 # Compute difference between 2 points
 def euclidean_distance(a, b):
@@ -32,14 +33,14 @@ def run_knn(K, truth, train, point):
         else:
             no_votes += 1
 
-    if yes_votes >= no_votes:
+    if yes_votes > no_votes:
         return 1
     else:
         return 0
 
-def cross_validation(feature_set, truth_set, K):
+def cross_validation(feature_set, truth_set, K, num_splits):
 
-    kf = KFold(n_splits=10)
+    kf = KFold(n_splits=num_splits)
     set_accuracy = []
     # Split the set indices between training and testing sets
     for train_index, test_index in kf.split(feature_set):
@@ -62,16 +63,27 @@ def cross_validation(feature_set, truth_set, K):
 def find_best_K(feature_set, truth_set):
 
     K = [ i for i in range(3, 53)]
+    errors = [] # Keep track of errors for each K value
 
     best_K = 1
     error_count = 10000000000
     for k in K:
 
-        x = cross_validation(feature_set, truth_set, k)
+        x = cross_validation(feature_set, truth_set, k, 10)
+
+        errors.append(x)
 
         if x < error_count:
             error_count = x
             best_K = k
+
+    # plt.scatter(K, errors, color='Grey')
+    # plt.xlim([0, max(K)+3])
+    # plt.title('Classification Accuracy for Values of K Using Cross Validation')
+    # plt.xlabel('K Value')
+    # plt.ylabel('Error Count')
+    # plt.ylim([0, max(errors)+3])
+    # plt.show()
 
     print "BEST K", best_K, " --- Errors: ", error_count
     return best_K
@@ -79,6 +91,7 @@ def find_best_K(feature_set, truth_set):
 def test_classifier(train_features, train_truth, test_features, test_truth, K):
 
     error_count = 0
+
     for p in range(len(test_features)):
         classification = run_knn(K, train_truth, train_features, test_features[p])
 

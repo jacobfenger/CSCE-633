@@ -21,14 +21,10 @@ def main():
     train_ftrs = inspection.normalize_features(train_ftrs, 0, 1)
     test_ftrs = inspection.normalize_features(test_ftrs, 0, 1)
 
-    #x = KNN.run_knn(3, train_outcome, train_ftrs, test_ftrs[10])
-
-    k = KNN.find_best_K(train_ftrs, train_outcome)
-    print k
-    #error_count = KNN.cross_validation(train_ftrs, train_outcome, 5)
-    #print 'outcome', error_count
-
-    #KNN.test_classifier(train_ftrs, train_outcome, test_ftrs, test_outcome, 9)
+    # Use cross validation to find the best K, and then run that k value with
+    # the test set
+    #k = KNN.find_best_K(train_ftrs, train_outcome)
+    KNN.test_classifier(train_ftrs, train_outcome, test_ftrs, test_outcome, 6)
 
 
 

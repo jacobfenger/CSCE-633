@@ -89,8 +89,7 @@ def explore_inputs(features, outcome):
 
 def main():
     train_ftrs, train_outcome = read_data('train.csv')
-
-    explore_inputs(train_ftrs, train_outcome)
+    #explore_inputs(train_ftrs, train_outcome)
 
 
 if (__name__) == '__main__':
