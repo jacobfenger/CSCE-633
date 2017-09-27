@@ -42,28 +42,33 @@ def cross_validation(feature_set, truth_set, K, num_splits):
 
     kf = KFold(n_splits=num_splits)
     set_accuracy = []
+    total = 0
     # Split the set indices between training and testing sets
     for train_index, test_index in kf.split(feature_set):
-        errors = 0
+        correct = 0
 
         X_train, x_test = feature_set[train_index], feature_set[test_index]
-        y_train, y_test = truth_set[train_index], truth_set[train_index]
+        y_train, y_test = truth_set[train_index], truth_set[test_index]
+
+        total = len(y_test)
 
         for i in range(len(x_test)):
             classification = run_knn(K, y_train, X_train, x_test[i])
 
-            if classification != y_test[i]:
-                errors += 1
+            if classification == y_test[i]:
+                correct += 1
 
-        set_accuracy.append(errors)
+        set_accuracy.append(correct)
 
-    print("K VALUE:", K, "---- ERRORS:", sum(set_accuracy)/len(set_accuracy))
-    return sum(set_accuracy)/len(set_accuracy)
+
+    #print("K VALUE:", K, "---- ERRORS:", sum(set_accuracy)/len(set_accuracy))
+    print(float(sum(set_accuracy))/len(set_accuracy))/total
+    return float((sum(set_accuracy)))/(len(set_accuracy))/total
 
 def find_best_K(feature_set, truth_set):
 
-    K = [ i for i in range(3, 53)]
-    errors = [] # Keep track of errors for each K value
+    K = [ i for i in range(3, 53, 2)]
+    accuracy = [] # Keep track of errors for each K value
 
     best_K = 1
     error_count = 10000000000
@@ -71,31 +76,32 @@ def find_best_K(feature_set, truth_set):
 
         x = cross_validation(feature_set, truth_set, k, 10)
 
-        errors.append(x)
+        accuracy.append(x)
 
         if x < error_count:
             error_count = x
             best_K = k
 
-    # plt.scatter(K, errors, color='Grey')
-    # plt.xlim([0, max(K)+3])
-    # plt.title('Classification Accuracy for Values of K Using Cross Validation')
-    # plt.xlabel('K Value')
-    # plt.ylabel('Error Count')
-    # plt.ylim([0, max(errors)+3])
-    # plt.show()
+    plt.plot(K, accuracy, color='Grey')
+    plt.xlim([0, max(K)+3])
+    plt.title('Classification Accuracy for Values of K Using Cross Validation')
+    plt.xlabel('K Value')
+    plt.ylabel('Accuracy')
+    plt.ylim([0, 1])
+    plt.xlim([min(K), max(K)])
+    plt.show()
 
     print "BEST K", best_K, " --- Errors: ", error_count
     return best_K
 
 def test_classifier(train_features, train_truth, test_features, test_truth, K):
 
-    error_count = 0
+    correct = 0
 
     for p in range(len(test_features)):
         classification = run_knn(K, train_truth, train_features, test_features[p])
 
-        if classification != test_truth[p]:
-            error_count += 1
+        if classification == test_truth[p]:
+            correct += 1
 
-    print "ERROR_COUNT FOR TEST SET: ", error_count
+    return correct

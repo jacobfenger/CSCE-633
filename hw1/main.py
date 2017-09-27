@@ -24,8 +24,9 @@ def main():
     # Use cross validation to find the best K, and then run that k value with
     # the test set
     #k = KNN.find_best_K(train_ftrs, train_outcome)
-    KNN.test_classifier(train_ftrs, train_outcome, test_ftrs, test_outcome, 6)
+    v = KNN.test_classifier(train_ftrs, train_outcome, test_ftrs, test_outcome, 7)
 
+    print "OVERALL ACCURACY FOR TEST SET: ", float(v)/len(test_outcome)
 
 
 if (__name__) == '__main__':
